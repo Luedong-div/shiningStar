@@ -17,3 +17,4 @@
 
 -   入口与逻辑：优先修改 `extension.js` 与 `source/`。
 -   路径约定：`extension.js` 里保持 `../../noname.js`；`source/*.js` 里保持 `../../../noname.js`。
+-   本文档由 AI 助手生成
