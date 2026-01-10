@@ -1,0 +1,628 @@
+/* 扩展方框 */
+.qxx-intro {
+	display: inline-block;
+	padding: 8px 12px;
+	border-radius: 6px;
+	background: linear-gradient(120deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	color: #fff5cf;
+	font-family: "STXinwei", "xinwei", serif;
+}
+
+/* 群星 prefix */
+.qxx-nameprefix {
+	position: relative;
+	display: inline-block;
+	writing-mode: vertical-rl;
+	-webkit-writing-mode: vertical-rl;
+	text-orientation: upright;
+	font-family: xingkai, xinwei, sans-serif;
+	font-weight: 600;
+	letter-spacing: 0;
+	line-height: 1;
+	isolation: isolate;
+	overflow: visible;
+}
+
+.qxx-nameprefix__char {
+	position: relative;
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+	color: transparent;
+	background-clip: text;
+	-webkit-background-clip: text;
+	background-repeat: no-repeat;
+	background-image: var(--qxx-base), linear-gradient(110deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 35%, rgba(255, 255, 255, 0.22) 48%, rgba(255, 255, 255, 0) 62%, rgba(255, 255, 255, 0) 100%);
+	background-size: 100% 100%, 240% 240%;
+	background-position: 50% 50%, -140% 50%;
+	text-shadow: 0 0 1px rgba(255, 255, 255, 0.55), 0 0 6px rgba(120, 210, 255, 0.28), 0 0 10px rgba(90, 170, 255, 0.18);
+	animation: qxx-nameprefix-breathe 2.8s ease-in-out infinite, qxx-nameprefix-shimmer 3.2s linear infinite;
+}
+
+.qxx-nameprefix__char--qun {
+	--qxx-base: linear-gradient(160deg, rgba(230, 250, 255, 0.98) 0%, rgba(165, 226, 255, 0.98) 40%, rgba(120, 195, 255, 0.95) 100%);
+	transform: translateY(0.2px);
+}
+
+.qxx-nameprefix__char--xing {
+	--qxx-base: linear-gradient(160deg, rgba(245, 255, 255, 1) 0%, rgba(190, 240, 255, 0.99) 45%, rgba(140, 210, 255, 0.96) 100%);
+	animation-delay: 0.12s, 0.22s;
+}
+
+.qxx-nameprefix__stars {
+	position: absolute;
+	left: -10%;
+	top: -10%;
+	width: 120%;
+	height: 120%;
+	pointer-events: none;
+	z-index: 2;
+	border-radius: 8px;
+	mix-blend-mode: screen;
+	overflow: hidden;
+	/* 防止竖排写字模式影响内部定位 */
+	writing-mode: horizontal-tb;
+	-webkit-writing-mode: horizontal-tb;
+}
+
+/* 星尘双层：A/B 交替淡入淡出，点位由 JS 更新（数量减半：4 点/层） */
+.qxx-nameprefix__stars::before,
+.qxx-nameprefix__stars::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	border-radius: inherit;
+	mix-blend-mode: screen;
+	filter: blur(0.18px);
+	transition: opacity 4.8s ease-in-out;
+}
+
+.qxx-nameprefix__stars::before {
+	opacity: var(--qxx-dust-a, 0.16);
+	background: radial-gradient(circle at var(--qxx-da1x, 18%) var(--qxx-da1y, 22%), rgba(255, 255, 255, 0.5) 0 0.7px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-da2x, 64%) var(--qxx-da2y, 16%), rgba(210, 245, 255, 0.45) 0 0.6px, rgba(210, 245, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-da3x, 78%) var(--qxx-da3y, 38%), rgba(190, 235, 255, 0.4) 0 0.6px, rgba(190, 235, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-da4x, 32%) var(--qxx-da4y, 58%), rgba(255, 255, 255, 0.36) 0 0.6px, rgba(255, 255, 255, 0) 2px);
+}
+
+.qxx-nameprefix__stars::after {
+	opacity: var(--qxx-dust-b, 0);
+	background: radial-gradient(circle at var(--qxx-db1x, 26%) var(--qxx-db1y, 34%), rgba(220, 248, 255, 0.46) 0 0.7px, rgba(220, 248, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-db2x, 58%) var(--qxx-db2y, 28%), rgba(255, 255, 255, 0.42) 0 0.65px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-db3x, 72%) var(--qxx-db3y, 72%), rgba(200, 235, 255, 0.42) 0 0.7px, rgba(200, 235, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-db4x, 40%) var(--qxx-db4y, 86%), rgba(255, 255, 255, 0.34) 0 0.6px, rgba(255, 255, 255, 0) 2px);
+}
+
+.qxx-nameprefix--randstars::before,
+.qxx-nameprefix--randstars::after {
+	content: "";
+	position: absolute;
+	left: -10%;
+	top: -10%;
+	width: 120%;
+	height: 120%;
+	pointer-events: none;
+	border-radius: 8px;
+	filter: blur(0.12px);
+	mix-blend-mode: screen;
+	will-change: opacity, transform;
+}
+
+.qxx-nameprefix--randstars::before {
+	opacity: var(--qxx-decal-small-o, 0.55);
+	transition: opacity 1.8s ease-in-out;
+	background: radial-gradient(circle at var(--qxx-ps1x, 18%) var(--qxx-ps1y, 22%), rgba(255, 255, 255, 0.92) 0 0.8px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps2x, 64%) var(--qxx-ps2y, 16%), rgba(210, 245, 255, 0.86) 0 0.7px, rgba(210, 245, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps3x, 78%) var(--qxx-ps3y, 38%), rgba(190, 235, 255, 0.8) 0 0.65px, rgba(190, 235, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps4x, 32%) var(--qxx-ps4y, 58%), rgba(255, 255, 255, 0.76) 0 0.65px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps5x, 72%) var(--qxx-ps5y, 72%), rgba(200, 235, 255, 0.82) 0 0.72px, rgba(200, 235, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps6x, 40%) var(--qxx-ps6y, 86%), rgba(255, 255, 255, 0.7) 0 0.6px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps7x, 22%) var(--qxx-ps7y, 76%), rgba(215, 246, 255, 0.78) 0 0.62px, rgba(215, 246, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps8x, 86%) var(--qxx-ps8y, 22%), rgba(255, 255, 255, 0.72) 0 0.58px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at var(--qxx-ps9x, 56%) var(--qxx-ps9y, 86%), rgba(195, 235, 255, 0.76) 0 0.64px, rgba(195, 235, 255, 0) 2px);
+	animation: qxx-decal-drift 14s ease-in-out infinite;
+}
+
+.qxx-nameprefix--randstars::after {
+	opacity: var(--qxx-decal-big-o, 0.35);
+	transition: opacity 2.2s ease-in-out;
+	background: radial-gradient(circle at var(--qxx-pb1x, 26%) var(--qxx-pb1y, 34%), rgba(255, 255, 255, 0.92) 0 1.15px, rgba(255, 255, 255, 0) 3px),
+		radial-gradient(circle at var(--qxx-pb2x, 58%) var(--qxx-pb2y, 28%), rgba(220, 248, 255, 0.86) 0 1.05px, rgba(220, 248, 255, 0) 3px),
+		radial-gradient(circle at var(--qxx-pb3x, 70%) var(--qxx-pb3y, 52%), rgba(190, 235, 255, 0.86) 0 1.1px, rgba(190, 235, 255, 0) 3px),
+		radial-gradient(circle at var(--qxx-pb4x, 44%) var(--qxx-pb4y, 70%), rgba(255, 255, 255, 0.78) 0 1px, rgba(255, 255, 255, 0) 3px),
+		radial-gradient(circle at var(--qxx-pb5x, 16%) var(--qxx-pb5y, 18%), rgba(210, 245, 255, 0.82) 0 1.02px, rgba(210, 245, 255, 0) 3px),
+		radial-gradient(circle at var(--qxx-pb6x, 82%) var(--qxx-pb6y, 78%), rgba(255, 255, 255, 0.76) 0 0.98px, rgba(255, 255, 255, 0) 3px);
+	animation: qxx-decal-drift 18s ease-in-out infinite reverse;
+}
+
+.qxx-nameprefix:not(.qxx-nameprefix--randstars)::before,
+.qxx-nameprefix:not(.qxx-nameprefix--randstars)::after {
+	content: "";
+	position: absolute;
+	left: -10%;
+	top: -10%;
+	width: 120%;
+	height: 120%;
+	pointer-events: none;
+	border-radius: 8px;
+	opacity: 0.9;
+	filter: blur(0.1px);
+	mix-blend-mode: screen;
+}
+
+.qxx-nameprefix:not(.qxx-nameprefix--randstars)::before {
+	background: radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.95) 0 0.8px, rgba(255, 255, 255, 0) 2px), radial-gradient(circle at 64% 16%, rgba(210, 245, 255, 0.9) 0 0.7px, rgba(210, 245, 255, 0) 2px),
+		radial-gradient(circle at 78% 38%, rgba(180, 230, 255, 0.85) 0 0.6px, rgba(180, 230, 255, 0) 2px), radial-gradient(circle at 32% 58%, rgba(255, 255, 255, 0.8) 0 0.6px, rgba(255, 255, 255, 0) 2px),
+		radial-gradient(circle at 72% 72%, rgba(200, 235, 255, 0.85) 0 0.7px, rgba(200, 235, 255, 0) 2px), radial-gradient(circle at 40% 86%, rgba(255, 255, 255, 0.75) 0 0.6px, rgba(255, 255, 255, 0) 2px);
+	animation: qxx-stars-twinkle 1.65s ease-in-out infinite;
+}
+
+.qxx-nameprefix:not(.qxx-nameprefix--randstars)::after {
+	background: radial-gradient(circle at 26% 34%, rgba(255, 255, 255, 0.95) 0 1.1px, rgba(255, 255, 255, 0) 3px), radial-gradient(circle at 58% 28%, rgba(220, 248, 255, 0.9) 0 1px, rgba(220, 248, 255, 0) 3px),
+		radial-gradient(circle at 70% 52%, rgba(190, 235, 255, 0.9) 0 1.05px, rgba(190, 235, 255, 0) 3px), radial-gradient(circle at 44% 70%, rgba(255, 255, 255, 0.85) 0 1px, rgba(255, 255, 255, 0) 3px);
+	animation: qxx-stars-drift 3.8s ease-in-out infinite;
+	opacity: 0.75;
+}
+
+@keyframes qxx-nameprefix-breathe {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+		opacity: 0.98;
+	}
+	50% {
+		filter: drop-shadow(0 0 2px rgba(170, 235, 255, 0.18));
+		opacity: 1;
+	}
+}
+
+@keyframes qxx-stars-twinkle {
+	0%,
+	100% {
+		opacity: 0.45;
+		transform: translate(0, 0) scale(0.98);
+	}
+	50% {
+		opacity: 0.92;
+		transform: translate(0.2px, -0.3px) scale(1);
+	}
+}
+
+@keyframes qxx-stars-drift {
+	0% {
+		opacity: 0.4;
+		transform: translate(-0.6px, 0.4px) scale(0.98);
+	}
+	45% {
+		opacity: 0.85;
+		transform: translate(0.6px, -0.5px) scale(1);
+	}
+	100% {
+		opacity: 0.45;
+		transform: translate(-0.2px, 0.2px) scale(0.99);
+	}
+}
+
+@keyframes qxx-nameprefix-shimmer {
+	0% {
+		background-position: 50% 50%, -140% 50%;
+	}
+	100% {
+		background-position: 50% 50%, 140% 50%;
+	}
+}
+
+@keyframes qxx-decal-drift {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(0.5px, -0.35px, 0);
+	}
+}
+
+/* ------------------------------ shiningStar 剧场对话 ------------------------------ */
+.dialog.shiningStar-convo {
+	--qxx-convo-h: 240px;
+	width: min(75vw, 920px);
+	height: var(--qxx-convo-h);
+	box-sizing: border-box;
+	border-radius: 26px;
+	background: radial-gradient(circle at 20% -20%, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%), linear-gradient(135deg, rgba(28, 64, 122, 0.95), rgba(14, 24, 53, 0.95));
+	border: 1px solid rgba(190, 221, 255, 0.65);
+	box-shadow: 0 18px 45px rgba(28, 52, 110, 0.55), 0 0 25px rgba(105, 175, 255, 0.45), inset 0 0 40px rgba(255, 255, 255, 0.08);
+	color: #fdfbfa;
+	font-size: 20px;
+	text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+	padding: 22px 28px;
+	position: relative;
+	overflow: hidden;
+}
+
+.dialog.shiningStar-convo:not(.shiningStar-convo--narration) {
+	padding-left: 176px;
+}
+
+.dialog.shiningStar-convo .content {
+	font-family: "STXinwei", "xinwei", serif;
+	letter-spacing: 0.6px;
+	font-size: 20px;
+	word-break: break-word;
+	max-height: calc(var(--qxx-convo-h) - 44px);
+	overflow-y: auto;
+	padding-right: 10px;
+}
+
+.dialog.shiningStar-convo.shiningStar-convo--narration .content {
+	text-align: center;
+}
+
+.dialog.shiningStar-convo .avatar {
+	width: 128px;
+	height: 128px;
+	border-radius: 20px;
+	box-shadow: 0 0 40px rgba(106, 196, 255, 0.6), 0 12px 28px rgba(4, 10, 29, 0.65);
+	outline: 1px solid rgba(210, 245, 255, 0.42);
+	background-size: cover;
+	background-position: center;
+}
+
+.dialog.shiningStar-convo .controls {
+	justify-content: center;
+	gap: 12px;
+	margin-top: 18px;
+}
+
+.dialog.shiningStar-convo .controls button {
+	padding: 10px 22px;
+	border-radius: 16px;
+	border: none;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+	color: #fdfdfd;
+	font-size: 16px;
+	letter-spacing: 0.5px;
+	box-shadow: 0 4px 14px rgba(50, 138, 255, 0.36);
+}
+
+.dialog.shiningStar-convo .controls button:hover {
+	transform: translateY(-1px);
+}
+
+/* ------------------------------ chooseEffect searcher ------------------------------ */
+.dialog.bosscharacter .searcher.caption {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex-wrap: nowrap;
+	padding: 6px 0;
+}
+
+.dialog.bosscharacter .searcher.caption .qxx-searcher__input {
+	flex: 1 1 auto;
+	min-width: 0;
+	max-width: 520px;
+	box-sizing: border-box;
+	border: solid 2px #294510;
+	border-radius: 6px;
+	font-weight: bold;
+	font-size: 21px;
+}
+
+.dialog.bosscharacter .searcher.caption .qxx-searcher__btn {
+	flex: 0 0 auto;
+	align-self: center;
+}
+
+/* ------------------------------ shiningStar title ------------------------------ */
+.shiningStar-title {
+	position: relative;
+	display: inline-block;
+	font-family: Georgia, "Times New Roman", serif;
+	font-weight: bold;
+	letter-spacing: 0.5px;
+
+	/* 冷色星辉：蓝/青/紫 */
+	background: linear-gradient(45deg, #e9fbff, #bff7ff, #73d7ff, #3a7bff, #7b5cff, #e9fbff);
+	background-size: 220% 220%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+
+	/* 更偏“星辉”的外发光 */
+	text-shadow: 0 0 0.5px rgba(255, 255, 255, 0.95), 0 0 1.6px rgba(115, 215, 255, 0.85), 0 0 3.2px rgba(58, 123, 255, 0.65), 0 0 6.5px rgba(123, 92, 255, 0.35), 1px 1px 1.2px rgba(0, 0, 0, 0.55), 1px 1px 1.6px rgba(0, 0, 0, 0.45);
+
+	padding: 0 6px;
+	animation: shiningStarGlow 3.2s ease-in-out infinite alternate, shiningStarShine 8.5s ease-in-out infinite;
+}
+
+@keyframes shiningStarGlow {
+	from {
+		text-shadow: 0 0 0.5px rgba(255, 255, 255, 0.75), 0 0 1.4px rgba(115, 215, 255, 0.55), 0 0 2.8px rgba(58, 123, 255, 0.45), 0 0 5.2px rgba(123, 92, 255, 0.25), 1px 1px 1.1px rgba(0, 0, 0, 0.75);
+	}
+	to {
+		text-shadow: 0 0 0.6px rgba(255, 255, 255, 0.98), 0 0 2.1px rgba(115, 215, 255, 0.9), 0 0 4.2px rgba(58, 123, 255, 0.78), 0 0 8.2px rgba(123, 92, 255, 0.5), 1px 1px 1.2px rgba(0, 0, 0, 0.6);
+	}
+}
+
+@keyframes shiningStarShine {
+	0% {
+		background-position: 0% 55%;
+	}
+	50% {
+		background-position: 100% 45%;
+	}
+	100% {
+		background-position: 0% 55%;
+	}
+}
+
+.shiningStar-title::after {
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, rgba(115, 215, 255, 0.65), rgba(58, 123, 255, 0.9), rgba(123, 92, 255, 0.65), transparent);
+	animation: shiningStarRay 4.2s ease-in-out infinite;
+}
+
+@keyframes shiningStarRay {
+	0%,
+	100% {
+		opacity: 0.55;
+		transform: scaleX(0.82);
+	}
+	50% {
+		opacity: 1;
+		transform: scaleX(1);
+	}
+}
+
+/* ------------------------------ shiningStar_retur dialog ------------------------------ */
+.dialog.shiningStar-retur-ui.addNewRow .item-container > * {
+	flex-shrink: 1 !important;
+	min-width: 0 !important;
+}
+
+.dialog.shiningStar-retur-ui.addNewRow .item-container {
+	min-width: 0 !important;
+}
+
+.shiningStar-retur-ui {
+	width: 980px;
+	max-width: calc(100% - 20px);
+	box-sizing: border-box;
+}
+
+.shiningStar-retur-ui .retur-content-container {
+	overflow-x: auto;
+	overflow-y: auto;
+	box-sizing: border-box;
+}
+
+.shiningStar-retur-ui .retur-content {
+	min-width: 960px;
+	max-width: 100%;
+	padding: 8px;
+	box-sizing: border-box;
+	user-select: none;
+}
+
+.retur-block {
+	position: relative;
+	box-sizing: border-box;
+}
+
+.retur-left-row {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.retur-left-list-container {
+	padding: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 12px;
+	background: rgba(0, 0, 0, 0.18);
+	min-width: 320px;
+	box-sizing: border-box;
+}
+
+.retur-left-list {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	align-items: stretch;
+}
+
+.retur-left-item-wrapper {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.retur-left-item-inner {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.retur-left-item-wrapper > .popup.text.textbutton {
+	position: relative;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.06);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.retur-left-item-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.retur-left-item-index,
+.retur-left-item-round {
+	padding: 4px 6px;
+	white-space: nowrap;
+}
+
+.retur-left-item-index {
+	width: 52px;
+	font-weight: 700;
+}
+
+.retur-right-panel-container {
+	padding: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 12px;
+	background: rgba(0, 0, 0, 0.12);
+	min-width: 560px;
+	box-sizing: border-box;
+}
+
+.retur-right-panel {
+	width: 100%;
+	min-width: 540px;
+	position: relative;
+	box-sizing: border-box;
+}
+
+.retur-detail-empty {
+	opacity: 0.85;
+	padding: 8px;
+}
+
+.retur-detail {
+	position: relative;
+	padding: 10px 12px;
+}
+
+.retur-detail-header {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+}
+
+.retur-current-round {
+	opacity: 0.85;
+	font-size: 12px;
+}
+
+.retur-pile-info {
+	position: relative;
+	margin-top: 8px;
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	opacity: 0.9;
+	font-size: 12px;
+}
+
+.retur-pile-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	white-space: nowrap;
+	padding: 2px 8px;
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	background: rgba(0, 0, 0, 0.18);
+}
+
+.retur-player-table-wrap {
+	position: relative;
+	margin-top: 10px;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	box-sizing: border-box;
+}
+
+.retur-player-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.retur-player-table thead tr {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.retur-player-table th {
+	padding: 6px 8px;
+	text-align: center;
+	opacity: 0.8;
+	font-weight: 600;
+	font-size: 14.5px;
+}
+
+.retur-th-seat {
+	width: 52px;
+	font-size: 14.5px;
+}
+
+.retur-th-status {
+	width: 70px;
+	font-size: 14.5px;
+}
+
+.retur-th-hp {
+	width: 164px;
+	font-size: 14.5px;
+}
+
+.retur-td-seat {
+	padding: 6px 8px;
+	width: 52px;
+	opacity: 0.85;
+	font-size: 14.5px;
+}
+
+.retur-td-name {
+	padding: 6px 8px;
+	font-size: 15px;
+	font-family: "xingkai", "xinwei", sans-serif;
+}
+
+.retur-td-status {
+	padding: 6px 8px;
+	font-size: 14.5px;
+}
+
+.retur-td-hp {
+	padding: 6px 8px;
+	font-size: 14.5px;
+}
+
+.retur-cardzone {
+	position: relative;
+	margin-top: 10px;
+	padding: 8px;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	background: rgba(0, 0, 0, 0.1);
+	box-sizing: border-box;
+}
+
+.retur-card-empty {
+	font-size: 12px;
+	opacity: 0.78;
+	display: contents;
+	margin: 6px 0 4px;
+}
+
+.retur-card-group-title {
+	font-size: 12px;
+	opacity: 0.78;
+	display: contents;
+	margin: 6px 0 4px;
+}
+
+.retur-card-group-buttons {
+	position: relative;
+	box-sizing: border-box;
+}
