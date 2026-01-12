@@ -3,6 +3,46 @@ import BoostStore from "./class/BoostStore.js";
 
 export default {
 	reserveDead: true,
+	async pop_up_prompt(message, where) {
+		const div = document.createElement("div");
+		div.textContent = message;
+		div.style.opacity = "1";
+		div.style.transition = "opacity 1s ease-out, transform 1s ease-out";
+		div.style.position = "fixed";
+		div.style.display = "flex";
+		div.style.justifyContent = "center";
+		div.style.alignItems = "center";
+		div.style.textAlign = "center";
+		div.style.flexDirection = "column";
+		let top = "30%",
+			left = "50%";
+
+		if (where) {
+			const positions = where.split("|");
+			top = `${parseFloat(positions[0]) * 100}%`;
+			if (positions.length > 1) left = `${parseFloat(positions[1]) * 100}%`;
+		}
+
+		div.style.top = top;
+		div.style.left = left;
+		div.style.transform = "translate(-50%, -50%) scale(0.1)";
+		div.style.backgroundColor = "transparent";
+		div.style.padding = "0";
+		div.style.border = "none";
+		div.style.zIndex = "1000";
+		div.style.fontSize = "1.5vw";
+
+		document.body.appendChild(div);
+		await new Promise(resolve => setTimeout(resolve, 30));
+		div.style.transform = "translate(-50%, -50%) scale(1)";
+		const cleanedMessage = message.replace(/[ ,;.!]/g, "");
+		const fadeOutStartTime = cleanedMessage.length * 150;
+		await new Promise(resolve => setTimeout(resolve, fadeOutStartTime));
+		div.style.opacity = "0";
+		await new Promise(resolve => setTimeout(resolve, 1000));
+
+		document.body.removeChild(div);
+	},
 
 	async chooseEffect(func) {
 		const data = await BoostStore.read();

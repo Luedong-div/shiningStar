@@ -17,12 +17,12 @@ export default {
 			if (this == game.boss || !game.hasPlayer(current => !current.side, true)) {
 				await game.checkResult();
 				if (game.bossinfo.checkPerfect && game.bossinfo.checkPerfect()) {
-					// 广播待补充
 					const currentData = await BoostStore.read();
 					const items = game.bossinfo.items || [];
 					for (const item of items) {
 						const names = Array.isArray(item.name) ? item.name : [item.name];
 						if (Math.random() < item.possibility) {
+							game.pop_up_prompt(`获得增益道具：${get.translation(names)}`);
 							currentData.boostItem.addArray(names);
 							BoostStore.write(currentData);
 						}
