@@ -12,8 +12,9 @@ export default {
 			}
 			if (!game.boss.isAlive() && game.bossinfo?.convo?.playConvoAfter) {
 				const convo = typeof game.bossinfo.convo.playConvoAfter === "function" ? game.bossinfo.convo.playConvoAfter() : game.bossinfo.convo.playConvoAfter;
-				game.playConvo(convo);
+				await game.playConvo(convo);
 			}
+			await game.checkResult();
 			if (this == game.boss || !game.hasPlayer(current => !current.side, true)) {
 				if (game.bossinfo.checkPerfect && game.bossinfo.checkPerfect()) {
 					const currentData = await BoostStore.read();
@@ -27,7 +28,6 @@ export default {
 						}
 					}
 				}
-				await game.checkResult();
 			}
 		},
 		// 道具系统

@@ -205,77 +205,86 @@ export default {
 		};
 	},
 	/**
-	 * 播放剧场
 	 * @param {Array} lines - 剧场对话数组，每个元素包含角色名和对话内容
-	 * @returns {void}
+	 * @returns {Promise<void>} 在对话结束或跳过时 resolve
 	 */
-	playConvo(lines) {
-		let num = 0;
-		let resizeListener;
+	async playConvo(lines) {
+		return new Promise(resolve => {
+			let num = 0;
+			let resizeListener;
+			let finished = false;
 
-		const step1 = () => {
-			const entry = lines[num];
-			const isNarration = entry.length === 1;
-			const dialogText = entry[entry.length - 1];
-			const dialog = ui.create.dialog();
-			dialog.addText(`<span style="font-size:16px;">${dialogText}</span>`, false);
-			dialog.classList.add("shiningStar-convo", "scroll");
-			if (isNarration) dialog.classList.add("shiningStar-convo--narration");
-			let player;
-			if (!isNarration) {
-				player = ui.create.div(".avatar", dialog).setBackground(entry[0], "character");
-				player.style.position = "absolute";
-				player.style.height = "168px";
-			}
-
-			dialog.style.height = "191px";
-			dialog.style.textAlign = isNarration ? "center" : "left";
-			dialog.style.position = "absolute";
-			dialog.style.transition = "transform 0.28s ease";
-
-			const avatarOffset = 0;
-			const updateDialogPosition = () => {
-				const dialogWidth = dialog.offsetWidth;
-				const windowWidth = window.innerWidth;
-				const centerPosition = (windowWidth - dialogWidth) / 2;
-				dialog.style.left = `${centerPosition + avatarOffset}px`;
-			};
-
-			updateDialogPosition();
-
-			resizeListener = () => {
-				updateDialogPosition();
-			};
-
-			window.addEventListener("resize", resizeListener);
-
-			ui.auto.hide();
-			dialog.open();
-
-			const closeDialog = () => {
-				ui.dialog.close();
-				while (ui.controls.length) ui.controls[0].close();
+			const finish = () => {
+				if (finished) return;
+				finished = true;
 				window.removeEventListener("resize", resizeListener);
+				game.resume();
+				resolve();
 			};
 
-			ui.create.control("继续", () => {
-				closeDialog();
-				num++;
-				if (num >= lines.length) {
-					game.resume();
-				} else {
-					step1();
+			const step1 = () => {
+				const entry = lines[num];
+				const isNarration = entry.length === 1;
+				const dialogText = entry[entry.length - 1];
+				const dialog = ui.create.dialog();
+				dialog.addText(`<span style="font-size:16px;">${dialogText}</span>`, false);
+				dialog.classList.add("shiningStar-convo", "scroll");
+				if (isNarration) dialog.classList.add("shiningStar-convo--narration");
+				let player;
+				if (!isNarration) {
+					player = ui.create.div(".avatar", dialog).setBackground(entry[0], "character");
+					player.style.position = "absolute";
+					player.style.height = "168px";
 				}
-			});
 
-			ui.create.control("跳过", () => {
-				closeDialog();
-				game.resume();
-			});
-		};
+				dialog.style.height = "191px";
+				dialog.style.textAlign = isNarration ? "center" : "left";
+				dialog.style.position = "absolute";
+				dialog.style.transition = "transform 0.28s ease";
 
-		game.pause();
-		step1();
+				const avatarOffset = 0;
+				const updateDialogPosition = () => {
+					const dialogWidth = dialog.offsetWidth;
+					const windowWidth = window.innerWidth;
+					const centerPosition = (windowWidth - dialogWidth) / 2;
+					dialog.style.left = `${centerPosition + avatarOffset}px`;
+				};
+
+				updateDialogPosition();
+
+				resizeListener = () => {
+					updateDialogPosition();
+				};
+
+				window.addEventListener("resize", resizeListener);
+
+				ui.auto.hide();
+				dialog.open();
+
+				const closeDialog = () => {
+					ui.dialog.close();
+					while (ui.controls.length) ui.controls[0].close();
+					window.removeEventListener("resize", resizeListener);
+				};
+
+				ui.create.control("继续", () => {
+					closeDialog();
+					num++;
+					if (num >= lines.length) {
+						finish();
+					} else {
+						step1();
+					}
+				});
+
+				ui.create.control("跳过", () => {
+					closeDialog();
+					finish();
+				});
+			};
+			game.pause();
+			step1();
+		});
 	},
 	/**
 	 * 添加额外角色
@@ -346,9 +355,8 @@ export default {
 	 */
 	async checkResult() {
 		game.over(!game.boss.isAlive());
-		const currentLevel = _status.event.name.slice(18);
 		const currentData = await BoostStore.read();
-		currentData.currentLevel = currentLevel + 1;
+		currentData.currentLevel = game.currentLevel + 1;
 		await BoostStore.write(currentData);
 	},
 	bossPhaseLoop() {
