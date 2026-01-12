@@ -200,6 +200,7 @@ class Auxiliary {
 	async prepareStage() {
 		await this.showBossList();
 		const bossName = _status.current.name;
+		game.currentLevel = Number(bossName.slice(18));
 		// 技能处理
 		for (const i in lib.skill) {
 			if (lib.skill[i].seatRelated === true) {

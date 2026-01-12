@@ -1,7 +1,4 @@
 {
-  "boostItem": [
-    "shiningStars_eternalStars",
-    "shiningStars_stoneSentinelMaze"
-  ],
-  "currentLevel": "1"
+	"boostItem": ["shiningStars_eternalStars", "shiningStars_stoneSentinelMaze"],
+	"currentLevel": 1
 }

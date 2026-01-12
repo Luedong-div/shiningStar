@@ -9,7 +9,7 @@ export default async function start(event) {
 	await auxiliary.launchEncounter(event);
 	if (game.bossinfo?.convo?.playConvoBefore) {
 		const convo = typeof game.bossinfo.convo.playConvoBefore === "function" ? game.bossinfo.convo.playConvoBefore() : game.bossinfo.convo.playConvoBefore;
-		game.playConvo(convo);
+		await game.playConvo(convo);
 	}
 	game.addGlobalSkill("viewSideHandCards");
 	await game.bossPhaseLoop();
