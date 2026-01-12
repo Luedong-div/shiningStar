@@ -345,15 +345,11 @@ export default {
 	 * 胜负判定
 	 */
 	async checkResult() {
-		if (game.boss == game.me) {
-			game.over(game.boss.isAlive());
-		} else {
-			game.over(!game.boss.isAlive());
-			const currentLevel = _status.event.name.slice(18);
-			const currentData = await BoostStore.read();
-			currentData.currentLevel = currentLevel + 1;
-			await BoostStore.write(currentData);
-		}
+		game.over(!game.boss.isAlive());
+		const currentLevel = _status.event.name.slice(18);
+		const currentData = await BoostStore.read();
+		currentData.currentLevel = currentLevel + 1;
+		await BoostStore.write(currentData);
 	},
 	bossPhaseLoop() {
 		const next = game.createEvent("phaseLoop");

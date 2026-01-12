@@ -15,7 +15,6 @@ export default {
 				game.playConvo(convo);
 			}
 			if (this == game.boss || !game.hasPlayer(current => !current.side, true)) {
-				await game.checkResult();
 				if (game.bossinfo.checkPerfect && game.bossinfo.checkPerfect()) {
 					const currentData = await BoostStore.read();
 					const items = game.bossinfo.items || [];
@@ -24,10 +23,11 @@ export default {
 						if (Math.random() < item.possibility) {
 							game.pop_up_prompt(`获得增益道具：${get.translation(names)}`);
 							currentData.boostItem.addArray(names);
-							BoostStore.write(currentData);
+							await BoostStore.write(currentData);
 						}
 					}
 				}
+				await game.checkResult();
 			}
 		},
 		// 道具系统
