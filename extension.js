@@ -20,7 +20,7 @@ export default async function () {
 		config: await basic.resolve(config),
 		help: await basic.resolve(help),
 		editable: false,
-		connect: true,
+		connect: false,
 		package: {},
 	};
 

@@ -8,7 +8,6 @@ export default {
 		maxHp: 4,
 		skills: ["shiningStar_retur"],
 		img: "extension/群星闪耀/assets/images/character/shiningStar_starChild.jpg",
-		// dieAudios: ["ext:群星闪耀/assets/audio/die/shiningStar_starChild.mp3"],
 	},
 
 	shiningStars_level1: {
