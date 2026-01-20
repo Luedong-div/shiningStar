@@ -311,6 +311,12 @@ const skills = {
 			await game.asyncDraw(game.filterPlayer().sortBySeat(player), 1);
 		},
 	},
+	shiningStars_stoneSentinelMaze: {
+		group: ["rw_bagua_skill"],
+		init(player, skill) {
+			player.addExtraEquip(skill, "rewrite_bagua", false, () => lib.card["rewrite_bagua"]);
+		},
+	},
 };
 
 export default skills;

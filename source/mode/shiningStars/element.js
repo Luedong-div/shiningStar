@@ -14,8 +14,8 @@ export default {
 				const convo = typeof game.bossinfo.convo.playConvoAfter === "function" ? game.bossinfo.convo.playConvoAfter() : game.bossinfo.convo.playConvoAfter;
 				await game.playConvo(convo);
 			}
-			await game.checkResult();
 			if (this == game.boss || !game.hasPlayer(current => !current.side, true)) {
+				await game.checkResult();
 				if (game.bossinfo.checkPerfect && game.bossinfo.checkPerfect()) {
 					const currentData = await BoostStore.read();
 					const items = game.bossinfo.items || [];
