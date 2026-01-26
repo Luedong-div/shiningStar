@@ -361,11 +361,16 @@ export default {
 	},
 	bossPhaseLoop() {
 		const next = game.createEvent("phaseLoop");
-
-		if (game.bossinfo.loopFirst) {
-			next.player = game.bossinfo.loopFirst();
+		let firstPlayer;
+		if (typeof game.bossinfo.global?.loopFirst === "number") {
+			firstPlayer = game.findPlayer(i => Number(i.dataset.position) == game.bossinfo.global.loopFirst) || game.boss;
 		} else {
-			next.player = game.boss;
+			firstPlayer = game.boss;
+		}
+
+		next.player = firstPlayer;
+		for (const [index, target] of game.filterPlayer().sortBySeat(firstPlayer).entries()) {
+			target.seatNum = index + 1;
 		}
 
 		_status.looped = true;
@@ -379,23 +384,15 @@ export default {
 						player.hp = 0;
 					}
 					player.storage.boss_chongzheng++;
-					if (player.maxHp > 0 && game.bossinfo.chongzheng) {
-						if (player.hp < player.maxHp) {
-							player.hp++;
-						} else if (player.countCards("h") < 4) {
-							var card = get.cards()[0];
-							var sort = lib.config.sort_card(card);
-							var position = sort > 0 ? player.node.handcards1 : player.node.handcards2;
-							card.fix();
-							card.addTempClass("start");
-							position.insertBefore(card, position.firstChild);
-						}
-						player.update();
-						if (player.storage.boss_chongzheng >= game.bossinfo.chongzheng) {
-							player.revive(player.hp);
+					const chongzhengCount = game.bossinfo.global?.chongzheng;
+					const loopType = game.bossinfo.global?.loopType;
+					if (player.maxHp > 0 && chongzhengCount) {
+						if (player.storage.boss_chongzheng >= chongzhengCount) {
+							await player.reviveEvent(player.maxHp);
+							await player.drawTo(4);
 						}
 					}
-					if (game.bossinfo.loopType == 2) {
+					if (loopType == 2) {
 						game.boss.chongzheng = true;
 					}
 				} else {
@@ -432,7 +429,8 @@ export default {
 				await event.trigger("phaseOver");
 			},
 			async (event, trigger, player) => {
-				if (game.bossinfo.loopType == 2) {
+				const loopType = game.bossinfo.global?.loopType;
+				if (loopType == 2) {
 					//最强神话那种回合执行顺序，boss一个回合，玩家再按顺序执行一个回合
 					_status.roundStart = true;
 					if (event.player == game.boss) {

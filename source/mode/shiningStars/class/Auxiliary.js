@@ -25,7 +25,7 @@ class Auxiliary {
 		const level = data.currentLevel;
 		lib.storage.current ??= "shiningStars_level1";
 		let list = [];
-		for (const [index, name] of lib.boss.shiningStarsBossList.entries()) {
+		for (const [index, name] of Object.keys(lib.boss.bossMap).entries()) {
 			const stageNumber = index + 1;
 			const locked = stageNumber > level;
 			const player = this._createStageEntry(bosslist, name, stageNumber, locked);
@@ -84,8 +84,8 @@ class Auxiliary {
 	async _applyStartingCards(target, cardsMap) {
 		for (const key in cardsMap) {
 			const cards = cardsMap[key].map(ls => {
-				const card = game.createCard2(ls[0], ls[1], ls[2], ls[3]);
-				if (ls[4]) {
+				const card = Array.isArray(ls) ? game.createCard2(ls[0], ls[1], ls[2], ls[3]) : game.createCard2(ls);
+				if (Array.isArray(ls) && ls[4]) {
 					card.storage = ls[4];
 				}
 				return card;
